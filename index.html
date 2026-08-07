@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>台灣夜市互動遊戲｜期末成果展</title>
+  <meta name="description" content="台灣夜市互動遊戲課程期末成果展示網站，結合 Arduino、Scratch 與 Processing 的夜市遊戲機台原型。" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="container">
+      <a href="index.html" class="site-nav__brand">夜市互動遊戲成果展</a>
+      <ul class="site-nav__links">
+        <li><a href="#groups">團體作品</a></li>
+        <li><a href="#students">個人作品</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <p class="hero__eyebrow">Final Project Showcase</p>
+    <h1>台灣夜市互動遊戲</h1>
+    <p>
+      本課程以「台灣夜市互動遊戲」為主題，結合 Arduino、Scratch 與 Processing，帶領學生體驗從實體互動到數位遊戲開發的完整流程。
+      學生認識搖桿、按鈕等感測器的應用，學習使用 Arduino 讀取感測器資料，建立實體裝置與數位畫面的連動，
+      並透過專題製作培養程式設計、互動控制、遊戲設計與創意實作能力，最終完成兼具趣味性與互動性的夜市遊戲機台原型。
+    </p>
+    <p class="hero__teacher">
+      指導老師：<button type="button" class="link-button" data-teacher-trigger>陳亞馨</button>
+    </p>
+  </header>
+
+  <main>
+    <section id="groups" class="section">
+      <div class="container">
+        <div class="section__header">
+          <h2>團體作品</h2>
+          <p>9 組同學合力打造的夜市遊戲機台原型</p>
+        </div>
+        <div id="groups-grid" class="cards-grid"></div>
+      </div>
+    </section>
+
+    <section id="students" class="section">
+      <div class="container">
+        <div class="section__header">
+          <h2>個人作品</h2>
+          <p>每位同學的期末個人作品內容</p>
+        </div>
+        <div id="students-wrap"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>台灣夜市互動遊戲｜期末成果展示網站</p>
+  </footer>
+
+  <div id="teacher-modal" class="modal">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-teacher-close aria-label="關閉">✕</button>
+      <div class="modal__avatar">
+        <img src="assets/media/teacher/chen-yaxin.png" alt="陳亞馨老師照片" />
+      </div>
+      <h3 class="modal__title">老師介紹</h3>
+      <p class="modal__name">陳亞馨</p>
+      <p class="modal__tags">#科技藝術專題 #情緒與科技 #STEAM教育</p>
+      <p class="modal__line">國立臺北科技大學 設計學院 博士生</p>
+      <p class="modal__line">國立臺北藝術大學 藝術與人文教育研究所</p>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

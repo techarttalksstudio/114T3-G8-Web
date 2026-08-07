@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>陳亮希的個人作品｜台灣夜市互動遊戲成果展</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="container">
+      <a href="../index.html" class="site-nav__brand">夜市互動遊戲成果展</a>
+      <ul class="site-nav__links">
+        <li><a href="../groups/c.html">查看C組夜市機台 →</a></li>
+        <li><a href="../index.html#students">← 回個人作品區</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="student-hero">
+    <div class="student-hero__photo"><img src="../assets/media/students/c-2-photo.png" alt="陳亮希的照片" /></div>
+    <h1>陳亮希</h1>
+    <p class="student-hero__group">C組｜個人作品</p>
+  </header>
+
+  <main class="section">
+    <div class="container student-content">
+    <h2 class="content-heading">壹、個人作品</h2>
+    <section class="slide-block"><h3 class="slide-block__title">一、Scratch x Joystick</h3><div class="slide-images"><img src="../assets/media/students/c-2/slide-2-2.png" alt="一、Scratch x Joystick" loading="lazy" /></div></section>
+    <section class="slide-block"><h3 class="slide-block__title">一（1）、Scratch x Joystick - 賽車遊戲</h3><div class="slide-images"><img src="../assets/media/students/c-2/slide-3-1.png" alt="一（1）、Scratch x Joystick - 賽車遊戲" loading="lazy" /><img src="../assets/media/students/c-2/slide-3-2.jpg" alt="一（1）、Scratch x Joystick - 賽車遊戲" loading="lazy" /></div></section>
+    <section class="slide-block"><h3 class="slide-block__title">一（2）、Scratch x Joystick - 打地鼠遊戲</h3><div class="slide-images"><img src="../assets/media/students/c-2/slide-4-1.png" alt="一（2）、Scratch x Joystick - 打地鼠遊戲" loading="lazy" /><img src="../assets/media/students/c-2/slide-4-2.png" alt="一（2）、Scratch x Joystick - 打地鼠遊戲" loading="lazy" /></div></section>
+    <section class="slide-block"><h3 class="slide-block__title">二、Processing基礎 - 彩色泡泡、射氣球、乒乓球裝置</h3><div class="slide-images"><img src="../assets/media/students/c-2/slide-5-1.png" alt="二、Processing基礎 - 彩色泡泡、射氣球、乒乓球裝置" loading="lazy" /></div></section>
+    <section class="slide-block"><h3 class="slide-block__title">二（1）、Processing基礎練習 - 彩色泡泡</h3><div class="slide-images"><img src="../assets/media/students/c-2/slide-6-1.png" alt="二（1）、Processing基礎練習 - 彩色泡泡" loading="lazy" /><img src="../assets/media/students/c-2/slide-6-2.png" alt="二（1）、Processing基礎練習 - 彩色泡泡" loading="lazy" /></div></section>
+    <section class="slide-block"><h3 class="slide-block__title">二（2）、Processing基礎練習 - 射氣球</h3><div class="slide-images"><img src="../assets/media/students/c-2/slide-7-1.png" alt="二（2）、Processing基礎練習 - 射氣球" loading="lazy" /></div><div class="slide-text"><pre class="slide-code"><code>import processing.sound.*;
+float balloonY = 600;
+float balloonX = 400;
+int score = 0;
+SoundFile popSound;
+void setup(){
+size(800,600);
+popSound = new SoundFile(this, &quot;pop.mp3&quot;);
+}
+void draw(){
+background(255);
+fill(#AD5A5A);
+ellipse(balloonX,balloonY,100,100);//x,y,width,height
+balloonY = balloonY - 3;
+if(balloonY &lt; -50){
+balloonY = 650;
+balloonX = random(50,750);
+}
+fill(0);
+textSize(30);
+text(&quot;score=&quot;+score, 20,40);
+}
+void mousePressed(){
+if (dist(mouseX, mouseY, balloonX, balloonY)&lt;50){
+score++; //score = score +1
+balloonY = 650;
+balloonX = random(50,750);
+popSound.play();
+}
+}</code></pre></div></section>
+    <section class="slide-block"><h3 class="slide-block__title">二（3）、Processing基礎練習 - 乒乓球裝置</h3><div class="slide-images"><img src="../assets/media/students/c-2/slide-8-1.png" alt="二（3）、Processing基礎練習 - 乒乓球裝置" loading="lazy" /><img src="../assets/media/students/c-2/slide-8-2.png" alt="二（3）、Processing基礎練習 - 乒乓球裝置" loading="lazy" /></div><div class="slide-text"><p>遊戲程式碼</p></div></section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>台灣夜市互動遊戲｜期末成果展示網站</p>
+  </footer>
+</body>
+</html>

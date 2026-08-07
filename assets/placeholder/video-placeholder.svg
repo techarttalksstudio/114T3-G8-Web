@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="影片準備中">
+  <rect width="400" height="300" fill="#f5f4f2"/>
+  <circle cx="200" cy="130" r="52" fill="#f64e27" opacity="0.12"/>
+  <path d="M182 100 L182 160 L232 130 Z" fill="#f64e27"/>
+  <text x="200" y="215" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="20" font-weight="700" fill="#141414">影片準備中</text>
+  <text x="200" y="245" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="14" fill="#6b6b6b">敬請期待</text>
+</svg>

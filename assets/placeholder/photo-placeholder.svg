@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="照片準備中">
+  <rect width="400" height="300" fill="#f5f4f2"/>
+  <rect x="140" y="95" width="120" height="90" rx="10" fill="none" stroke="#141414" stroke-width="4"/>
+  <circle cx="170" cy="120" r="10" fill="#141414"/>
+  <path d="M150 175 L190 140 L215 165 L235 145 L250 175 Z" fill="#f64e27"/>
+  <text x="200" y="215" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="20" font-weight="700" fill="#141414">照片準備中</text>
+  <text x="200" y="245" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="14" fill="#6b6b6b">敬請期待</text>
+</svg>

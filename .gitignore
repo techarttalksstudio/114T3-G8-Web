@@ -1,0 +1,15 @@
+.DS_Store
+__pycache__/
+*.pyc
+
+# Uncompressed backup, not used by the live site
+assets/機台影片/原始檔/
+
+# Raw student-submitted decks -- kept locally to regenerate students/ and
+# groups/ pages, but not published (contains students' original files).
+assets/8-1/
+assets/8-2/
+assets/8-3/
+
+# Personal Claude Code overrides, not shared with the team
+.claude/settings.local.json
