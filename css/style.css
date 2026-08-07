@@ -601,6 +601,14 @@ a {
   border: 2px solid var(--line-soft);
 }
 
+.slide-images video {
+  width: 100%;
+  border-radius: 12px;
+  display: block;
+  background: #000;
+  border: 2px solid var(--line-soft);
+}
+
 /* 製作紀錄 gallery: cap at 3 per row regardless of photo count, and crop
    to a uniform tile (unlike other image grids, which show the full,
    uncropped photo at its natural ratio) since these are click-to-enlarge */

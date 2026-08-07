@@ -399,32 +399,36 @@ def render_content_heading(title):
     return f'<h2 class="content-heading">{html.escape(title)}</h2>'
 
 
+def render_media_grid(slide):
+    images = slide.get('images') or []
+    videos = slide.get('videos') or []
+    if not images and not videos:
+        return ''
+    alt = html.escape(slide['title'])
+    items = ''.join(f'<img src="{html.escape(src)}" alt="{alt}" loading="lazy" />' for src in images)
+    items += ''.join(f'<video src="{html.escape(src)}" controls preload="metadata"></video>' for src in videos)
+    return f'<div class="slide-images">{items}</div>'
+
+
 def render_slide_blocks(slides, empty_message):
     blocks = []
     for slide in slides:
-        if not slide['title'] and not slide['text_html'] and not slide['images']:
+        has_media = slide['images'] or slide.get('videos')
+
+        if not slide['title'] and not slide['text_html'] and not has_media:
             continue
 
-        if slide['title'] and not slide['text_html'] and not slide['images']:
+        if slide['title'] and not slide['text_html'] and not has_media:
             blocks.append(render_content_heading(slide['title']))
             continue
 
         if slide.get('heading_style'):
-            images_html = ''
-            if slide['images']:
-                imgs = ''.join(f'<img src="{html.escape(src)}" alt="{html.escape(slide["title"])}" loading="lazy" />' for src in slide['images'])
-                images_html = f'<div class="slide-images">{imgs}</div>'
-            blocks.append(f'{render_content_heading(slide["title"])}{images_html}')
+            blocks.append(f'{render_content_heading(slide["title"])}{render_media_grid(slide)}')
             continue
-
-        images_html = ''
-        if slide['images']:
-            imgs = ''.join(f'<img src="{html.escape(src)}" alt="{html.escape(slide["title"])}" loading="lazy" />' for src in slide['images'])
-            images_html = f'<div class="slide-images">{imgs}</div>'
 
         text_html = f'<div class="slide-text">{slide["text_html"]}</div>' if slide['text_html'] else ''
         title_html = f'<h3 class="slide-block__title">{html.escape(slide["title"])}</h3>' if slide['title'] else ''
 
-        blocks.append(f'<section class="slide-block">{title_html}{images_html}{text_html}</section>')
+        blocks.append(f'<section class="slide-block">{title_html}{render_media_grid(slide)}{text_html}</section>')
 
     return '\n    '.join(blocks) if blocks else f'<p class="student-empty">{empty_message}</p>'

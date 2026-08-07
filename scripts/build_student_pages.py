@@ -39,6 +39,31 @@ SLIDE_OVERRIDES = {
 # adjusted after generation — never delete or replace it on rebuild.
 PROTECTED_PHOTOS = {'e-1', 'a-1'}
 
+VIDEO_EXTS = ('.mov', '.mp4', '.m4v', '.webm')
+
+
+def substitute_slide_videos(slides, img_dir, img_url_prefix):
+    """A slide whose actual media is a video often only extracts as a tiny
+    placeholder icon via python-pptx (video isn't a PICTURE shape). When a
+    hand-supplied video file shares a slide image's basename (e.g.
+    slide-3-3.mov next to the auto-extracted slide-3-3.png), swap that
+    placeholder image out for the real video."""
+    for slide in slides:
+        images, videos = [], []
+        for img_url in slide['images']:
+            base = os.path.splitext(os.path.basename(img_url))[0]
+            match = next(
+                (f for ext in VIDEO_EXTS for f in glob.glob(os.path.join(img_dir, f'{base}{ext}')) + glob.glob(os.path.join(img_dir, f'{base}{ext.upper()}'))),
+                None,
+            )
+            if match:
+                videos.append(f'{img_url_prefix}/{os.path.basename(match)}')
+            else:
+                images.append(img_url)
+        slide['images'] = images
+        slide['videos'] = videos
+    return slides
+
 
 def apply_slide_overrides(slide):
     override = SLIDE_OVERRIDES.get(slide['title'])
@@ -150,6 +175,7 @@ def main():
             apply_slide_overrides(extract_slide_content(prs.slides[i], i - start + 1, img_dir, img_url_prefix))
             for i in range(start + 1, group_start)  # skip the 「壹、個人作品」section-title slide itself
         ]
+        slides = substitute_slide_videos(slides, img_dir, img_url_prefix)
 
         if key in PROTECTED_PHOTOS:
             existing = glob.glob(os.path.join(MEDIA_DIR, f'{key}-photo.*'))
