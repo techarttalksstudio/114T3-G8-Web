@@ -311,6 +311,8 @@ def render_page(group, machine_name, video_paths, exhibit_fields, gallery_images
   </footer>
 
   <script src="../js/lightbox.js"></script>
+  <script data-goatcounter="https://techarttalksstudio.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
 '''

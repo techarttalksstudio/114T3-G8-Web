@@ -111,6 +111,8 @@ def render_page(student, slides, photo_url):
   </footer>
 
   <script src="../js/lightbox.js"></script>
+  <script data-goatcounter="https://techarttalksstudio.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
 '''
