@@ -282,7 +282,7 @@ def render_page(group, machine_name, video_paths, exhibit_fields, gallery_images
 <body>
   <nav class="site-nav">
     <div class="container">
-      <a href="../index.html" class="site-nav__brand">夜市互動遊戲成果展</a>
+      <a href="../index.html" class="site-nav__brand">第一版機台的原型紀錄</a>
       <ul class="site-nav__links">
         <li><a href="../index.html#groups">← 回團體作品區</a></li>
       </ul>

@@ -86,7 +86,7 @@ def render_page(student, slides, photo_url):
 <body>
   <nav class="site-nav">
     <div class="container">
-      <a href="../index.html" class="site-nav__brand">夜市互動遊戲成果展</a>
+      <a href="../index.html" class="site-nav__brand">第一版機台的原型紀錄</a>
       <ul class="site-nav__links">
         <li><a href="../groups/{student["group_id"]}.html">查看{html.escape(student["group_name"])}夜市機台 →</a></li>
         <li><a href="../index.html#students">← 回個人作品區</a></li>
