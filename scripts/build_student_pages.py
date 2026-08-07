@@ -26,15 +26,18 @@ STUDENTS_DIR = os.path.join(ROOT, 'students')
 # blurb on these two slides (it's boilerplate from the course template, not
 # personal content) — drop the text. The Joystick slide additionally keeps
 # only its last image (the wiring-diagram photo), dropping the screenshot.
+# Both are section-divider slides, so they render as a big borderless
+# heading (optionally with that one image below) instead of a boxed
+# slide-block like the rest of the content.
 SLIDE_OVERRIDES = {
-    '一、Scratch x Joystick': {'strip_text': True, 'keep_last_image_only': True},
-    '二、Processing基礎 - 彩色泡泡、射氣球、乒乓球裝置': {'strip_text': True},
+    '一、Scratch x Joystick': {'strip_text': True, 'keep_last_image_only': True, 'heading_style': True},
+    '二、Processing基礎 - 彩色泡泡、射氣球、乒乓球裝置': {'strip_text': True, 'heading_style': True},
 }
 
 
 # Students whose assets/media/students/<key>-photo.<ext> was hand-cropped/
 # adjusted after generation — never delete or replace it on rebuild.
-PROTECTED_PHOTOS = {'e-1'}
+PROTECTED_PHOTOS = {'e-1', 'a-1'}
 
 
 def apply_slide_overrides(slide):
@@ -45,6 +48,8 @@ def apply_slide_overrides(slide):
         slide['text_html'] = ''
     if override.get('keep_last_image_only') and slide['images']:
         slide['images'] = slide['images'][-1:]
+    if override.get('heading_style'):
+        slide['heading_style'] = True
     return slide
 
 
@@ -104,6 +109,8 @@ def render_page(student, slides, photo_url):
   <footer class="site-footer">
     <p>台灣夜市互動遊戲｜期末成果展示網站</p>
   </footer>
+
+  <script src="../js/lightbox.js"></script>
 </body>
 </html>
 '''
@@ -139,7 +146,7 @@ def main():
 
         slides = [
             apply_slide_overrides(extract_slide_content(prs.slides[i], i - start + 1, img_dir, img_url_prefix))
-            for i in range(start, group_start)
+            for i in range(start + 1, group_start)  # skip the 「壹、個人作品」section-title slide itself
         ]
 
         if key in PROTECTED_PHOTOS:

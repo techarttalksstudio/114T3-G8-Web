@@ -28,7 +28,8 @@ from pptx_common import (
     GROUPS, ASSETS_DIR, find_pptx_for, section_bounds, slide_title,
     extract_slide_content, extract_exhibit_text_fields, extract_gallery_images,
     extract_cover_images, extract_assignment_paragraphs, find_group_videos,
-    render_content_heading, find_machine_name, SUBSECTION_ASSIGNMENT,
+    find_manual_group_photos, render_content_heading, find_machine_name,
+    SUBSECTION_ASSIGNMENT,
 )
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -39,16 +40,19 @@ HEADER_WORDS = {'小組分工', '分工', '組員分工', '我負責的部分的
 NAME_LINE_RE = re.compile(r'^[>🔎●◆\-\*\s]*([^：:]{1,24})[：:]\s*(.+)$')
 NAME_TOKEN_RE = re.compile(r'^[一-鿿A-Za-z（）() 、,，&]+$')
 
-# Manual corrections applied after the automatic gallery-image extraction,
-# so a known-bad auto-picked photo (e.g. one slide's picture duplicating
-# another slide's, or a code screenshot) stays fixed across re-runs instead
-# of reverting every time the pptx is re-scanned. Maps group id -> {gallery
-# filename already produced by extract_gallery_images: replacement source
-# path relative to the repo root}.
+# Manual corrections applied after the automatic image extraction, so a
+# known-bad auto-picked photo (e.g. one slide's picture duplicating another
+# slide's, a code screenshot, or a photo that needed hand-rotating) stays
+# fixed across re-runs instead of reverting every time the pptx is
+# re-scanned. Maps group id -> {generated filename: replacement source path
+# relative to the repo root}.
 GALLERY_IMAGE_OVERRIDES = {
     'd': {
         'gallery-3-1.png': 'assets/機台影片/D.png',  # was a duplicate of the sign photo; swapped for the real target-conveyor photo
         'device.png': 'assets/機台影片/D.png',  # same swap for the homepage card's 機台 cover tile
+    },
+    'c': {
+        'sign.png': 'assets/media/groups/c/sign-protected.png',  # hand-rotated to upright; source pptx photo is sideways
     },
 }
 
@@ -59,6 +63,20 @@ def apply_gallery_overrides(group_id, img_dir):
         src = os.path.join(ROOT, src_rel)
         if os.path.exists(dest) and os.path.exists(src):
             shutil.copyfile(src, dest)
+
+
+def add_manual_gallery_photos(group_id, img_dir, img_url_prefix):
+    """Hand-supplied 製作紀錄 photos (assets/*補照片*/<LETTER>.* or
+    <LETTER>-<n>.*, e.g. D.JPG or C-1.JPG/C-2.JPG) copied alongside the
+    auto-extracted gallery images. Returns their URLs to append."""
+    urls = []
+    for i, src in enumerate(find_manual_group_photos(group_id), start=1):
+        ext = os.path.splitext(src)[1].lower()
+        filename = f'extra-{i}{ext}'
+        dest = os.path.join(img_dir, filename)
+        shutil.copyfile(src, dest)
+        urls.append(f'{img_url_prefix}/{filename}')
+    return urls
 
 
 def find_assignment_index(prs, group_start, reflection_start):
@@ -115,7 +133,15 @@ def filter_own_lines(paras, member_name, keep_freeform=True):
 
         tokens = _split_name_tokens(names_part)
         if _mentions(tokens, member_name):
-            kept.append(remainder)
+            if all(member_name in t or t in member_name for t in tokens):
+                # Every name in the "Name：" prefix is just this member
+                # (possibly a nickname) -- redundant with the block's <h3>
+                # heading above it, so drop the prefix and keep only desc.
+                kept.append(desc)
+            else:
+                # Shared line naming other members too (e.g. "吳婕語、李心恬：
+                # 招牌") -- keep the full prefix, it's informative.
+                kept.append(remainder)
         else:
             # Name-shaped line ("Someone：did X") that isn't self -- drop it
             # even if the name doesn't exactly match another roster member
@@ -148,7 +174,7 @@ def render_assignment_blocks(assignment_data):
         items.append(
             f'<div class="assignment-block">'
             f'<h3 class="assignment-block__name"><a href="../students/{entry["key"]}.html">{html.escape(entry["name"])}</a></h3>'
-            f'{images_html}{text_block}'
+            f'{text_block}{images_html}'
             f'</div>'
         )
     return f'<div class="assignment-list">{"".join(items)}</div>'
@@ -169,11 +195,11 @@ def render_exhibit_blocks(fields, gallery_images):
         )
 
     if gallery_images:
-        imgs = ''.join(f'<img src="{html.escape(src)}" alt="機台照片" loading="lazy" />' for src in gallery_images)
+        imgs = ''.join(f'<img src="{html.escape(src)}" alt="製作紀錄" loading="lazy" />' for src in gallery_images)
         blocks.append(
             f'<section class="exhibit-block">'
-            f'<span class="exhibit-block__label">機台照片</span>'
-            f'<div class="slide-images">{imgs}</div>'
+            f'<span class="exhibit-block__label">製作紀錄</span>'
+            f'<div class="slide-images slide-images--gallery">{imgs}</div>'
             f'</section>'
         )
 
@@ -220,8 +246,20 @@ def render_media_html(media_paths):
     return hero_html, extra_html
 
 
-def render_page(group, machine_name, video_paths, exhibit_fields, gallery_images, member_keys, assignment_data):
+def render_sign_showcase(sign_url, group_name):
+    if not sign_url:
+        return ''
+    return (
+        '<section class="exhibit-block">'
+        '<span class="exhibit-block__label">招牌設計</span>'
+        f'<div class="sign-showcase"><img src="{html.escape(sign_url)}" alt="{html.escape(group_name)}招牌" loading="lazy" /></div>'
+        '</section>'
+    )
+
+
+def render_page(group, machine_name, video_paths, exhibit_fields, gallery_images, member_keys, assignment_data, sign_url):
     assignment_html = render_assignment_blocks(assignment_data)
+    sign_html = render_sign_showcase(sign_url, group['name'])
     exhibit_html = render_exhibit_blocks(exhibit_fields, gallery_images)
     video_hero_html, video_extra_html = render_media_html(video_paths)
     group_line_html = render_group_line(group, member_keys)
@@ -261,6 +299,7 @@ def render_page(group, machine_name, video_paths, exhibit_fields, gallery_images
   <main class="section">
     <div class="container student-content">
     {video_extra_html}
+    {sign_html}
     {exhibit_html}
     {render_content_heading('小組分工')}
     {assignment_html}
@@ -270,6 +309,8 @@ def render_page(group, machine_name, video_paths, exhibit_fields, gallery_images
   <footer class="site-footer">
     <p>台灣夜市互動遊戲｜期末成果展示網站</p>
   </footer>
+
+  <script src="../js/lightbox.js"></script>
 </body>
 </html>
 '''
@@ -345,6 +386,7 @@ def main():
         machine_name = find_machine_name(prs, group_start, reflection_start)
         exhibit_fields = extract_exhibit_text_fields(prs, group_start, reflection_start)
         gallery_images = extract_gallery_images(prs, group_start, reflection_start, img_dir, img_url_prefix)
+        gallery_images += add_manual_gallery_photos(group['id'], img_dir, img_url_prefix)
         cover = extract_cover_images(prs, group_start, reflection_start, img_dir, img_url_prefix)
         apply_gallery_overrides(group['id'], img_dir)
         video_paths = find_group_videos(group['id'])
@@ -357,14 +399,14 @@ def main():
         member_keys = [(name, f'{group["id"]}-{i + 1}') for i, name in enumerate(group['members'])]
         assignment_data = build_assignment_data(group, leader_paras, img_dir, img_url_prefix, issues)
 
-        html_out = render_page(group, machine_name, video_paths, exhibit_fields, gallery_images, member_keys, assignment_data)
+        html_out = render_page(group, machine_name, video_paths, exhibit_fields, gallery_images, member_keys, assignment_data, cover['sign'])
         with open(os.path.join(GROUPS_DIR, f'{group["id"]}.html'), 'w', encoding='utf-8') as fh:
             fh.write(html_out)
 
         with_lines = sum(1 for e in assignment_data if e['lines'])
         completed += 1
         print(f'✓ {group["id"]}  {group["name"]}（組長 {group["leader"]}）：機台名稱「{machine_name}」，'
-              f'{len(video_paths)} 支影片，{len(exhibit_fields)} 個文字欄位，{len(gallery_images)} 張機台照片，'
+              f'{len(video_paths)} 支影片，{len(exhibit_fields)} 個文字欄位，{len(gallery_images)} 張製作紀錄照片，'
               f'{with_lines}/{len(assignment_data)} 位分工，'
               f'招牌照 {cover["sign"]}，機台照 {cover["device"]}')
 

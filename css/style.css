@@ -92,10 +92,33 @@ a {
 
 /* Hero */
 .hero {
+  position: relative;
   text-align: center;
   padding: 88px 24px 64px;
   background: var(--accent);
   border-bottom: 3px solid var(--line);
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('../assets/banner/hero-bg.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(246, 78, 39, 0.87);
+}
+
+.hero > * {
+  position: relative;
+  z-index: 1;
 }
 
 .hero__eyebrow {
@@ -478,6 +501,24 @@ a {
   margin-bottom: 14px;
 }
 
+.sign-showcase {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.sign-showcase img {
+  max-width: 100%;
+  max-height: 60vh;
+  width: auto;
+  height: auto;
+  display: block;
+  border-radius: 16px;
+  background: var(--bg-soft);
+  border: 3px solid var(--line);
+  box-shadow: 5px 5px 0 var(--shadow);
+}
+
 .student-hero h1 {
   margin: 0;
   color: var(--ink);
@@ -546,18 +587,76 @@ a {
 
 .slide-images {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 10px;
   margin-bottom: 14px;
 }
 
 .slide-images img {
   width: 100%;
+  height: auto;
   border-radius: 12px;
   display: block;
-  object-fit: contain;
   background: var(--bg-soft);
   border: 2px solid var(--line-soft);
+}
+
+/* 製作紀錄 gallery: cap at 3 per row regardless of photo count, and crop
+   to a uniform tile (unlike other image grids, which show the full,
+   uncropped photo at its natural ratio) since these are click-to-enlarge */
+.slide-images--gallery {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.slide-images--gallery img {
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  cursor: zoom-in;
+}
+
+@media (max-width: 720px) {
+  .slide-images--gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Lightbox */
+.img-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 20, 0.92);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  z-index: 200;
+}
+
+.img-lightbox.is-open {
+  display: flex;
+}
+
+.img-lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  display: block;
+}
+
+.img-lightbox__close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: transparent;
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .slide-text p,

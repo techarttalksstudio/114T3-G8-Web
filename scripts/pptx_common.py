@@ -69,6 +69,20 @@ def find_manual_photo(name):
     return None
 
 
+def find_manual_group_photos(group_id):
+    """Look for hand-supplied group "製作紀錄" photos, named after the group
+    letter (e.g. assets/0807-補照片/D.JPG, or C-1.JPG/C-2.JPG for more than
+    one). Any assets/*補照片*/ folder is searched; returns a sorted list of
+    paths, empty if the group has no manual photos."""
+    letter = group_id.upper()
+    folders = sorted(glob.glob(os.path.join(ASSETS_DIR, '*補照片*')), reverse=True)
+    matches = []
+    for folder in folders:
+        matches.extend(glob.glob(os.path.join(folder, f'{letter}.*')))
+        matches.extend(glob.glob(os.path.join(folder, f'{letter}-*.*')))
+    return sorted(set(matches))
+
+
 def slide_title(slide):
     for shape in slide.shapes:
         if shape.has_text_frame and shape.text_frame.text.strip():
@@ -309,12 +323,14 @@ def extract_cover_images(prs, group_start, reflection_start, img_dir, img_url_pr
 
 def extract_gallery_images(prs, group_start, reflection_start, img_dir, img_url_prefix):
     """Collect every machine-related photo in the leader's 「貳、夜市機台介紹」
-    slides (skipping the 分工 slide and the old 示範影片 placeholder slide)
-    for a single photo gallery at the bottom of the exhibit text."""
+    slides (skipping the 分工 slide, the old 示範影片 placeholder slide, and
+    the 招牌設計 slide -- that one gets its own standalone showcase image
+    instead of sitting in this gallery) for a single photo gallery at the
+    bottom of the exhibit text."""
     images = []
     for i in range(group_start, reflection_start):
         title = slide_title(prs.slides[i])
-        if SUBSECTION_ASSIGNMENT in title or DEMO_TITLE_MARKER in title:
+        if SUBSECTION_ASSIGNMENT in title or DEMO_TITLE_MARKER in title or SIGN_TITLE_MARKER in title:
             continue
         content = extract_slide_content(prs.slides[i], i - group_start + 1, img_dir, img_url_prefix, img_prefix='gallery')
         images.extend(content['images'])
@@ -391,6 +407,14 @@ def render_slide_blocks(slides, empty_message):
 
         if slide['title'] and not slide['text_html'] and not slide['images']:
             blocks.append(render_content_heading(slide['title']))
+            continue
+
+        if slide.get('heading_style'):
+            images_html = ''
+            if slide['images']:
+                imgs = ''.join(f'<img src="{html.escape(src)}" alt="{html.escape(slide["title"])}" loading="lazy" />' for src in slide['images'])
+                images_html = f'<div class="slide-images">{imgs}</div>'
+            blocks.append(f'{render_content_heading(slide["title"])}{images_html}')
             continue
 
         images_html = ''
